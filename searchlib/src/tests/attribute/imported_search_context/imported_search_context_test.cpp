@@ -48,7 +48,7 @@ struct Fixture : ImportedAttributeFixture {
     }
 
     SimpleResult search(SearchIterator& iter) {
-        return SimpleResult().searchStrict(iter, get_imported_attr()->getNumDocs());
+        return SimpleResult().search(iter, get_imported_attr()->getNumDocs());
     }
 };
 

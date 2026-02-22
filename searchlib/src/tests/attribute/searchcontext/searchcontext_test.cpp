@@ -1975,11 +1975,7 @@ public:
         TermFieldMatchData tfmd;
         auto itr = search_ctx->createIterator(&tfmd, strict);
         SimpleResult result;
-        if (strict) {
-            result.searchStrict(*itr, _attr.getNumDocs());
-        } else {
-            result.search(*itr, _attr.getNumDocs());
-        }
+        result.search(*itr, _attr.getNumDocs());
         return result;
     }
 };
