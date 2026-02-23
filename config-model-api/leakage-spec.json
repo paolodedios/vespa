@@ -126,6 +126,9 @@
     "com.yahoo.config.provision.DataplaneToken",
     "com.yahoo.config.provision.HostName"
   ],
+  "com.yahoo.config.model.api.OnnxMemoryStats" : [
+    "com.fasterxml.jackson.databind.JsonNode"
+  ],
   "com.yahoo.config.model.api.OnnxModelCost" : [
     "com.yahoo.config.provision.ApplicationId",
     "com.yahoo.config.provision.ClusterSpec$Id"

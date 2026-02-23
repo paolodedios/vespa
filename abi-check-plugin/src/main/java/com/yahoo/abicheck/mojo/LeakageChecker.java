@@ -158,7 +158,7 @@ public class LeakageChecker extends AbstractMojo {
             Set<String> leaked = new TreeSet<>();
             for (String type : entry.getValue()) {
                 String pkg = packageOf(type);
-                if (isVespaPackage(pkg) && !publicApiPackages.contains(pkg)) {
+                if (!isStandardLibrary(pkg) && !publicApiPackages.contains(pkg)) {
                     leaked.add(type);
                 }
             }
@@ -176,6 +176,14 @@ public class LeakageChecker extends AbstractMojo {
 
     static boolean isVespaPackage(String pkg) {
         return pkg.startsWith("com.yahoo.") || pkg.startsWith("ai.vespa.");
+    }
+
+    static boolean isStandardLibrary(String pkg) {
+        return pkg.startsWith("java.")
+            || pkg.startsWith("javax.")
+            || pkg.startsWith("org.w3c.dom")
+            || pkg.startsWith("org.xml.sax")
+            || pkg.startsWith("org.ietf.jgss");
     }
 
     // --- Comparison ---
@@ -243,7 +251,7 @@ public class LeakageChecker extends AbstractMojo {
                 }
             }
 
-            // Filter to only leaked (non-public-API Vespa) types
+            // Filter to only leaked (non-public-API, non-standard-library) types
             Map<String, Set<String>> leakages = filterLeakages(referencedTypes, publicApiPackages);
 
             if (System.getProperty(WRITE_SPEC_PROPERTY) != null) {

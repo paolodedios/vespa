@@ -124,6 +124,7 @@
     "com.yahoo.data.disclosure.DataSource"
   ],
   "com.yahoo.search.rendering.JsonGeneratorDataSink" : [
+    "com.fasterxml.jackson.core.JsonGenerator",
     "com.yahoo.data.disclosure.DataSink"
   ],
   "com.yahoo.search.rendering.JsonRenderer$FieldConsumer" : [

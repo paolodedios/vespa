@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 public class LeakageCheckerTest {
 
     @Test
-    public void filters_vespa_non_public_api_types_as_leakages() {
+    public void filters_non_standard_library_types_as_leakages() {
         Map<String, Set<String>> referencedTypes = Map.of(
                 "com.yahoo.publicapi.Foo", Set.of(
                         "java.lang.String",
@@ -28,7 +28,8 @@ public class LeakageCheckerTest {
         Map<String, Set<String>> leakages = LeakageChecker.filterLeakages(referencedTypes, publicApiPackages);
 
         assertThat(leakages.size(), equalTo(1));
-        assertThat(leakages.get("com.yahoo.publicapi.Foo"), equalTo(Set.of("com.yahoo.internal.Baz")));
+        assertThat(leakages.get("com.yahoo.publicapi.Foo"),
+                equalTo(Set.of("com.yahoo.internal.Baz", "org.apache.commons.Util")));
     }
 
     @Test
@@ -141,5 +142,54 @@ public class LeakageCheckerTest {
         assertThat(LeakageChecker.isVespaPackage("ai.vespa.foo"), equalTo(true));
         assertThat(LeakageChecker.isVespaPackage("java.lang"), equalTo(false));
         assertThat(LeakageChecker.isVespaPackage("org.apache.commons"), equalTo(false));
+    }
+
+    @Test
+    public void excludes_standard_library_types() {
+        Map<String, Set<String>> referencedTypes = Map.of(
+                "com.yahoo.publicapi.Foo", Set.of(
+                        "java.lang.String",
+                        "java.util.List",
+                        "javax.net.ssl.SSLContext",
+                        "org.w3c.dom.Document",
+                        "org.xml.sax.SAXException",
+                        "org.ietf.jgss.GSSContext"));
+        Set<String> publicApiPackages = Set.of("com.yahoo.publicapi");
+
+        Map<String, Set<String>> leakages = LeakageChecker.filterLeakages(referencedTypes, publicApiPackages);
+
+        assertThat(leakages.isEmpty(), equalTo(true));
+    }
+
+    @Test
+    public void detects_third_party_type_leakages() {
+        Map<String, Set<String>> referencedTypes = Map.of(
+                "com.yahoo.publicapi.Foo", Set.of(
+                        "com.google.common.collect.ImmutableList",
+                        "com.fasterxml.jackson.databind.JsonNode",
+                        "com.google.protobuf.ByteString"));
+        Set<String> publicApiPackages = Set.of("com.yahoo.publicapi");
+
+        Map<String, Set<String>> leakages = LeakageChecker.filterLeakages(referencedTypes, publicApiPackages);
+
+        assertThat(leakages.size(), equalTo(1));
+        assertThat(leakages.get("com.yahoo.publicapi.Foo"),
+                equalTo(Set.of(
+                        "com.google.common.collect.ImmutableList",
+                        "com.fasterxml.jackson.databind.JsonNode",
+                        "com.google.protobuf.ByteString")));
+    }
+
+    @Test
+    public void isStandardLibrary_recognizes_standard_prefixes() {
+        assertThat(LeakageChecker.isStandardLibrary("java.lang"), equalTo(true));
+        assertThat(LeakageChecker.isStandardLibrary("java.util"), equalTo(true));
+        assertThat(LeakageChecker.isStandardLibrary("javax.net.ssl"), equalTo(true));
+        assertThat(LeakageChecker.isStandardLibrary("org.w3c.dom"), equalTo(true));
+        assertThat(LeakageChecker.isStandardLibrary("org.xml.sax"), equalTo(true));
+        assertThat(LeakageChecker.isStandardLibrary("org.ietf.jgss"), equalTo(true));
+        assertThat(LeakageChecker.isStandardLibrary("com.yahoo.foo"), equalTo(false));
+        assertThat(LeakageChecker.isStandardLibrary("com.google.common"), equalTo(false));
+        assertThat(LeakageChecker.isStandardLibrary("org.apache.commons"), equalTo(false));
     }
 }

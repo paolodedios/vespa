@@ -48,7 +48,10 @@
     "com.yahoo.jdisc.http.server.jetty.DataplaneProxyCredentials"
   ],
   "com.yahoo.container.jdisc.DisableOsgiFramework" : [
-    "com.yahoo.jdisc.application.OsgiFramework"
+    "com.yahoo.jdisc.application.OsgiFramework",
+    "org.osgi.framework.Bundle",
+    "org.osgi.framework.BundleContext",
+    "org.osgi.framework.BundleException"
   ],
   "com.yahoo.container.jdisc.DisabledConnectionLogProvider" : [
     "com.yahoo.container.logging.ConnectionLog"
@@ -71,6 +74,20 @@
   ],
   "com.yahoo.container.jdisc.RequestHandlerTestDriver" : [
     "com.yahoo.jdisc.test.TestDriver"
+  ],
+  "com.yahoo.container.jdisc.RestrictedBundleContext" : [
+    "org.osgi.framework.Bundle",
+    "org.osgi.framework.BundleContext",
+    "org.osgi.framework.BundleException",
+    "org.osgi.framework.BundleListener",
+    "org.osgi.framework.Filter",
+    "org.osgi.framework.FrameworkListener",
+    "org.osgi.framework.InvalidSyntaxException",
+    "org.osgi.framework.ServiceFactory",
+    "org.osgi.framework.ServiceListener",
+    "org.osgi.framework.ServiceObjects",
+    "org.osgi.framework.ServiceReference",
+    "org.osgi.framework.ServiceRegistration"
   ],
   "com.yahoo.container.jdisc.SystemInfoProvider" : [
     "com.yahoo.cloud.config.ApplicationIdConfig",
