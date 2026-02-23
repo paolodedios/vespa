@@ -441,7 +441,7 @@ AttributeMapLookupNode::createResultHandler(bool preserveAccurateTypes, const at
                 case BasicType::INT64:
                     return prepareIntValues<int64_t, Int64ResultNode>(std::move(keyHandler), attribute, undefinedValue);
                 default:
-                    throw std::runtime_error(std::format("This is no valid integer attribute '{}'",
+                    throw std::runtime_error(std::format("'{}' is not a valid integer attribute"
                                                          " for attribute map lookup result", attribute.getName()));
             }
         } else {
@@ -457,7 +457,7 @@ AttributeMapLookupNode::createResultHandler(bool preserveAccurateTypes, const at
                 case BasicType::INT64:
                     return prepareIntValues<int64_t, Int64ResultNode>(std::move(keyHandler), attribute, undefinedValue);
                 default:
-                    throw std::runtime_error(std::format("This is no valid integer attribute '{}'",
+                    throw std::runtime_error(std::format("'{}' is not a valid integer attribute",
                                                          " for attribute map lookup result", attribute.getName()));
             }
         }
@@ -475,7 +475,7 @@ AttributeMapLookupNode::createResultHandler(bool preserveAccurateTypes, const at
                 return { std::move(resultNode), std::move(handler) };
             }
             default:
-                throw std::runtime_error(std::format("This is no valid float attribute '{}'"
+                throw std::runtime_error(std::format("'{}' is not a valid float attribute"
                                                      " for attribute map lookup result", attribute.getName()));
         }
     } else if (attribute.isStringType()) {
