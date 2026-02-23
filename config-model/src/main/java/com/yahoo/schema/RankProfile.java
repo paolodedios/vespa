@@ -1029,9 +1029,7 @@ public class RankProfile implements Cloneable {
         addRankProperty(prefix + ".attribute", op.attribute);
         addRankProperty(prefix + ".operation", op.operation);
     }
-    public void addMutateOperation(MutateOperation.Phase phase, String attribute, String operation) {
-        addMutateOperation(new MutateOperation(phase, attribute, operation));
-    }
+
     public List<MutateOperation> getMutateOperations() { return mutateOperations; }
 
     public RankingExpressionFunction findFunction(String name) {

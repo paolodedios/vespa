@@ -248,6 +248,12 @@ public final class SchemaInfo extends Derived {
             this.rerankCount = profile.getRerankCount();
             this.totalRerankCount = profile.getTotalRerankCount();
             useSignificanceModel = profile.useSignificanceModel();
+            validate();
+        }
+
+        private void validate() {
+            if (rerankCount.isPresent() && totalRerankCount.isPresent())
+                throw new IllegalArgumentException();
         }
 
         public String name() { return name; }

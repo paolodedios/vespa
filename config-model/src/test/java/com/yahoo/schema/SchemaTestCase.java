@@ -896,7 +896,6 @@ public class SchemaTestCase {
                     rank-profile test {
                         second-phase {
                             rerank-count: 43
-                            total-rerank-count: 213
                         }
                     }
                 }""";
@@ -908,6 +907,28 @@ public class SchemaTestCase {
         derived.getSchemaInfo().getConfig(schemaInfoConfigBuilder);
         var schemaInfoConfig = schemaInfoConfigBuilder.build().toString();
         assertTrue(schemaInfoConfig.contains("rerankCount 43"));
+    }
+
+    @Test
+    void testSecondPhaseTotalRerankCount() throws Exception {
+        String schema =
+                """
+                schema doc {
+                    document doc {
+                    }
+                    rank-profile test {
+                        second-phase {
+                            total-rerank-count: 213
+                        }
+                    }
+                }""";
+        ApplicationBuilder builder = new ApplicationBuilder(new DeployLoggerStub());
+        builder.addSchema(schema);
+        var application = builder.build(true);
+        var derived = new DerivedConfiguration(application.schemas().get("doc"), application.rankProfileRegistry());
+        var schemaInfoConfigBuilder = new SchemaInfoConfig.Builder();
+        derived.getSchemaInfo().getConfig(schemaInfoConfigBuilder);
+        var schemaInfoConfig = schemaInfoConfigBuilder.build().toString();
         assertTrue(schemaInfoConfig.contains("totalRerankCount 213"));
     }
 
