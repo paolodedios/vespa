@@ -8,6 +8,7 @@
 #include <vespa/searchcommon/attribute/multi_value_read_view_traits.h>
 #include <vespa/vespalib/stllike/asciistream.h>
 #include <vespa/vespalib/util/exceptions.h>
+#include <format>
 
 using search::attribute::ArrayReadViewType_t;
 using search::attribute::BasicType;
@@ -282,7 +283,7 @@ findAttribute(const search::attribute::IAttributeContext &attrCtx, bool useEnumO
 {
     const IAttributeVector *attribute = useEnumOptimization ? attrCtx.getAttributeStableEnum(name) : attrCtx.getAttribute(name);
     if (attribute == nullptr) {
-        throw std::runtime_error(vespalib::make_string("Failed locating attribute vector '%s'", name.c_str()));
+        throw std::runtime_error(std::format("Failed locating attribute vector '{}' for attribute map lookup", name));
     }
     return attribute;
 }
@@ -440,7 +441,8 @@ AttributeMapLookupNode::createResultHandler(bool preserveAccurateTypes, const at
                 case BasicType::INT64:
                     return prepareIntValues<int64_t, Int64ResultNode>(std::move(keyHandler), attribute, undefinedValue);
                 default:
-                    throw std::runtime_error("This is no valid integer attribute " + attribute.getName());
+                    throw std::runtime_error(std::format("This is no valid integer attribute '{}'",
+                                                         " for attribute map lookup result", attribute.getName()));
             }
         } else {
             switch (basicType) {
@@ -455,7 +457,8 @@ AttributeMapLookupNode::createResultHandler(bool preserveAccurateTypes, const at
                 case BasicType::INT64:
                     return prepareIntValues<int64_t, Int64ResultNode>(std::move(keyHandler), attribute, undefinedValue);
                 default:
-                    throw std::runtime_error("This is no valid integer attribute " + attribute.getName());
+                    throw std::runtime_error(std::format("This is no valid integer attribute '{}'",
+                                                         " for attribute map lookup result", attribute.getName()));
             }
         }
     } else if (attribute.isFloatingPointType()) {
@@ -472,7 +475,8 @@ AttributeMapLookupNode::createResultHandler(bool preserveAccurateTypes, const at
                 return { std::move(resultNode), std::move(handler) };
             }
             default:
-                throw std::runtime_error("This is no valid float attribute " + attribute.getName());
+                throw std::runtime_error(std::format("This is no valid float attribute '{}'"
+                                                     " for attribute map lookup result", attribute.getName()));
         }
     } else if (attribute.isStringType()) {
         if (useEnumOptimization()) {
@@ -489,8 +493,8 @@ AttributeMapLookupNode::createResultHandler(bool preserveAccurateTypes, const at
             return { std::move(resultNode), std::move(handler) };
         }
     } else {
-        throw std::runtime_error(vespalib::make_string("Can not deduce correct resultclass for attribute vector '%s'",
-                                                       attribute.getName().c_str()));
+        throw std::runtime_error(std::format("Can not deduce correct resultclass for attribute vector '{}'"
+                                             " for attribute map lookup result", attribute.getName()));
     }
 }
 
