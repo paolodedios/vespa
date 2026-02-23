@@ -259,7 +259,7 @@ public:
     void handle(const AttributeResult & r) override {
         uint32_t docId = r.getDocId();
         uint32_t keyIdx  = _keyHandler->handle(docId);
-        if (keyIdx != AttributeMapLookupNode::KeyHandler::noKeyIdx()) {
+        if (keyIdx != AttributeMapLookupNode::KeyHandler::noKeyIdx() && _read_view != nullptr) {
             auto values = _read_view->get_values(docId);
             if (keyIdx < values.size()) {
                 _result = unwrap_value(values[keyIdx]);
