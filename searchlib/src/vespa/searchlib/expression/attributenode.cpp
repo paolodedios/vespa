@@ -238,13 +238,13 @@ AttributeNode::createResultHandler(bool preserveAccurateTypes, const IAttributeV
             } else {
                 switch (basicType) {
                     case BasicType::INT8:
-                        return createMulti<IntegerResultNodeVector, IntegerHandler<Int8ResultNodeVector, int8_t>>(attribute);
+                        return createMulti<IntegerResultNodeVector, IntegerHandler<IntegerResultNodeVector, int8_t>>(attribute);
                     case BasicType::INT16:
-                        return createMulti<IntegerResultNodeVector, IntegerHandler<Int16ResultNodeVector, int16_t>>(attribute);
+                        return createMulti<IntegerResultNodeVector, IntegerHandler<IntegerResultNodeVector, int16_t>>(attribute);
                     case BasicType::INT32:
-                        return createMulti<IntegerResultNodeVector, IntegerHandler<Int32ResultNodeVector, int32_t>>(attribute);
+                        return createMulti<IntegerResultNodeVector, IntegerHandler<IntegerResultNodeVector, int32_t>>(attribute);
                     case BasicType::INT64:
-                        return createMulti<IntegerResultNodeVector, IntegerHandler<Int64ResultNodeVector, int64_t>>(attribute);
+                        return createMulti<IntegerResultNodeVector, IntegerHandler<IntegerResultNodeVector, int64_t>>(attribute);
                     default:
                         ;
                 }
