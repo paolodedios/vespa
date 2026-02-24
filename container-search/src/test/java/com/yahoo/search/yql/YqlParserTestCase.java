@@ -501,6 +501,16 @@ public class YqlParserTestCase {
     }
 
     @Test
+    void testIndexedAccessRewritesToSameElement() {
+        // ints[1] = 2 should rewrite to ints contains ({elementFilter:[1]}sameElement(2))
+        QueryTree qt = parse("select * from sources * where ints[1] = \"2\"");
+        SameElementItem se = (SameElementItem) qt.getRoot();
+        assertEquals("ints", se.getFieldName());
+        assertEquals(List.of(1), se.getElementFilter());
+        assertEquals(1, se.getItemCount());
+    }
+
+    @Test
     void testPhrase() {
         assertParse("select foo from bar where baz contains phrase(\"a\", \"b\")",
                 "baz:\"a b\"");
