@@ -419,15 +419,21 @@ public class YqlParser implements Parser {
      * Expected input: EQ( INDEX ( field_name, number ), value )
      */
     private OperatorNode<ExpressionOperator> rewriteIndexedAccess(OperatorNode<ExpressionOperator> ast) {
-        if (ast.getOperator() != ExpressionOperator.EQ) return ast;
+        if (ast.getOperator() != ExpressionOperator.EQ) {
+            return ast;
+        }
+
         OperatorNode<ExpressionOperator> lhs = ast.getArgument(0);
         OperatorNode<ExpressionOperator> value = ast.getArgument(1);
+        if (lhs.getOperator() != ExpressionOperator.INDEX) {
+            return ast;
+        }
 
-        if (lhs.getOperator() != ExpressionOperator.INDEX) return ast;
         OperatorNode<ExpressionOperator> field = lhs.getArgument(0);
         OperatorNode<ExpressionOperator> index = lhs.getArgument(1);
-        if (index.getOperator() != ExpressionOperator.LITERAL)
+        if (index.getOperator() != ExpressionOperator.LITERAL) {
             throw newUnexpectedArgumentException(index, ExpressionOperator.LITERAL);
+        }
 
         // TODO(johsol): Remove conversion to string when sameElement supports other values than strings.
         value = toLiteralString(value);
@@ -444,8 +450,9 @@ public class YqlParser implements Parser {
 
     // TODO(johsol): Remove conversion to string when sameElement supports other values than strings.
     private static OperatorNode<ExpressionOperator> toLiteralString(OperatorNode<ExpressionOperator> ast) {
-        if (ast.getOperator() == ExpressionOperator.LITERAL && !(ast.getArgument(0) instanceof String))
+        if (ast.getOperator() == ExpressionOperator.LITERAL && !(ast.getArgument(0) instanceof String)) {
             return OperatorNode.create(ast.getLocation(), ExpressionOperator.LITERAL, ast.getArgument(0).toString());
+        }
         return ast;
     }
 
