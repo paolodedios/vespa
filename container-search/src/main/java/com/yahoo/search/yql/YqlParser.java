@@ -437,7 +437,7 @@ public class YqlParser implements Parser {
 
         // TODO(johsol): Remove conversion to string when sameElement supports other values than strings.
         value = toLiteralString(value);
-        int elementIndex = convertToIntForElementFilter(index.getArgument(0));
+        int elementIndex = convertToElementId(index.getArgument(0));
         OperatorNode<ExpressionOperator> sameElement = OperatorNode.create(
                 ast.getLocation(),
                 ExpressionOperator.CALL,
@@ -814,40 +814,40 @@ public class YqlParser implements Parser {
             List<Integer> filter = new ArrayList<>();
             if (elementFilterObj instanceof List<?> list) {
                 for (Object val : list) {
-                    filter.add(convertToIntForElementFilter(val));
+                    filter.add(convertToElementId(val));
                 }
             } else {
-                filter.add(convertToIntForElementFilter(elementFilterObj));
+                filter.add(convertToElementId(elementFilterObj));
             }
             sameElement.setElementFilter(filter);
         }
     }
 
     /** Element filter accepts Integer. Allows Long that is within Integer size. */
-    private int convertToIntForElementFilter(Object val) {
+    private int convertToElementId(Object val) {
         if (val == null) {
-            throw new IllegalArgumentException("elementFilter cannot contain null values");
+            throw new IllegalArgumentException("element id cannot be null");
         }
         if (val instanceof Integer intVal) {
             if (intVal < 0) {
-                throw new IllegalArgumentException("elementFilter values must be non-negative, got: " + val);
+                throw new IllegalArgumentException("element id must be non-negative, got: " + val);
             }
             return intVal;
         } else if (val instanceof Long longVal) {
             if (longVal > Integer.MAX_VALUE) {
                 throw new IllegalArgumentException(
-                        "elementFilter values must fit in int32 range, got: " + longVal);
+                        "element id must fit in int32 range, got: " + longVal);
             }
             if (longVal < 0) {
-                throw new IllegalArgumentException("elementFilter values must be non-negative, got: " + val);
+                throw new IllegalArgumentException("element id must be non-negative, got: " + val);
             }
             return longVal.intValue();
         } else if (val instanceof Double || val instanceof Float) {
             throw new IllegalArgumentException(
-                    "elementFilter values must be integers, not floating point numbers. Got: " + val);
+                    "element id must be integer, not floating point number. Got: " + val);
         } else {
             throw new IllegalArgumentException(
-                    "elementFilter values must be integers, got: " + val.getClass().getSimpleName());
+                    "element id must be integer, got: " + val.getClass().getSimpleName());
         }
     }
 
