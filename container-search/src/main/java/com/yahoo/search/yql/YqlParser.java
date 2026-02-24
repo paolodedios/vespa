@@ -429,6 +429,8 @@ public class YqlParser implements Parser {
         if (index.getOperator() != ExpressionOperator.LITERAL)
             throw newUnexpectedArgumentException(index, ExpressionOperator.LITERAL);
 
+        // TODO(johsol): Remove conversion to string when sameElement supports other values than strings.
+        value = toLiteralString(value);
         int elementIndex = convertToIntForElementFilter(index.getArgument(0));
         OperatorNode<ExpressionOperator> sameElement = OperatorNode.create(
                 ast.getLocation(),
@@ -438,6 +440,13 @@ public class YqlParser implements Parser {
         sameElement.putAnnotation(ELEMENT_FILTER, List.of(elementIndex));
 
         return OperatorNode.create(ast.getLocation(), ExpressionOperator.CONTAINS, field, sameElement);
+    }
+
+    // TODO(johsol): Remove conversion to string when sameElement supports other values than strings.
+    private static OperatorNode<ExpressionOperator> toLiteralString(OperatorNode<ExpressionOperator> ast) {
+        if (ast.getOperator() == ExpressionOperator.LITERAL && !(ast.getArgument(0) instanceof String))
+            return OperatorNode.create(ast.getLocation(), ExpressionOperator.LITERAL, ast.getArgument(0).toString());
+        return ast;
     }
 
     private Item buildFunctionCallOrCompositeLeaf(OperatorNode<ExpressionOperator> ast, String currentField) {
