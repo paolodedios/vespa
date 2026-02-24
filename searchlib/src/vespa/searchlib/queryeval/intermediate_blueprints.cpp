@@ -207,7 +207,7 @@ AndNotBlueprint::createIntermediateSearch(MultiSearch::Children sub_searches,
 SearchIterator::UP
 AndNotBlueprint::createFilterSearchImpl(FilterConstraint constraint) const
 {
-    if (_elementwise) {
+    if (_elementwise && constraint == FilterConstraint::UPPER_BOUND) {
         return create_first_child_filter(get_children(), constraint);
     }
     return create_andnot_filter(get_children(), constraint);
