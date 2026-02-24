@@ -375,6 +375,7 @@ public class YqlParser implements Parser {
     private Item convertExpression(OperatorNode<ExpressionOperator> ast, String currentField) {
         try {
             annotationStack.addFirst(ast);
+            ast = rewriteIndexedAccess(ast);
             return switch (ast.getOperator()) {
                 case AND -> buildAnd(ast, currentField);
                 case OR -> buildOr(ast, currentField);
@@ -407,6 +408,36 @@ public class YqlParser implements Parser {
         } finally {
             annotationStack.removeFirst();
         }
+    }
+
+    /**
+     * Recognizes and rewrites from:
+     *      field[index] = value`
+     * to:
+     *      field contains ({elementFilter:[index]}sameElement(value))
+     * <p>
+     * Expected input: EQ( INDEX ( field_name, number ), value )
+     */
+    private OperatorNode<ExpressionOperator> rewriteIndexedAccess(OperatorNode<ExpressionOperator> ast) {
+        if (ast.getOperator() != ExpressionOperator.EQ) return ast;
+        OperatorNode<ExpressionOperator> lhs = ast.getArgument(0);
+        OperatorNode<ExpressionOperator> value = ast.getArgument(1);
+
+        if (lhs.getOperator() != ExpressionOperator.INDEX) return ast;
+        OperatorNode<ExpressionOperator> field = lhs.getArgument(0);
+        OperatorNode<ExpressionOperator> index = lhs.getArgument(1);
+        if (index.getOperator() != ExpressionOperator.LITERAL)
+            throw newUnexpectedArgumentException(index, ExpressionOperator.LITERAL);
+
+        int elementIndex = convertToIntForElementFilter(index.getArgument(0));
+        OperatorNode<ExpressionOperator> sameElement = OperatorNode.create(
+                ast.getLocation(),
+                ExpressionOperator.CALL,
+                List.of(SAME_ELEMENT),
+                List.of(value));
+        sameElement.putAnnotation(ELEMENT_FILTER, List.of(elementIndex));
+
+        return OperatorNode.create(ast.getLocation(), ExpressionOperator.CONTAINS, field, sameElement);
     }
 
     private Item buildFunctionCallOrCompositeLeaf(OperatorNode<ExpressionOperator> ast, String currentField) {
