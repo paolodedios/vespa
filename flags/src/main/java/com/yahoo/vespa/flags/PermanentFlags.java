@@ -683,6 +683,14 @@ public class PermanentFlags {
             "Takes effect on next maintainer run",
             CLUSTER_ID, APPLICATION, TENANT_ID, ZONE_ID);
 
+    public static final UnboundBooleanFlag IGNORE_CONNECTIVITY_CHECKS_AT_STARTUP = defineFeatureFlag(
+            "ignore-connectivity-checks-at-startup", false,
+            "Ignore connectivity checks in config-sentinel at startup. " +
+                    "Normally the sentinel checks that a sufficient fraction of cluster nodes can reach each other before starting services. " +
+                    "When this flag is set, services are started immediately regardless of connectivity check results.",
+            "Takes effect on next host restart",
+            TENANT_ID, APPLICATION, INSTANCE_ID);
+
     public static final UnboundListFlag<String> ALLOW_FLAVORS = defineListFlag(
             "allow-flavors", List.of(), String.class,
             "Flavors that that we will allow provisioning (flavors with lifecycle 'active' are allowed by default)" +
