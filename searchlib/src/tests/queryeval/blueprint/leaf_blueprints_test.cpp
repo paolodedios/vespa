@@ -21,7 +21,7 @@ TEST(LeafBlueprintsTest, empty_blueprint)
     SearchIterator::UP search = empty.createSearch(*md);
 
     SimpleResult res;
-    res.search(*search);
+    res.search(*search, 100);
     SimpleResult expect; // empty
     EXPECT_EQ(res, expect);
 }
@@ -39,7 +39,7 @@ TEST(LeafBlueprintsTest, simple_blueprint)
     SearchIterator::UP search = simple.createSearch(*md);
 
     SimpleResult res;
-    res.search(*search);
+    res.search(*search, 100);
     SimpleResult expect;
     expect.addHit(3).addHit(5).addHit(7);
     EXPECT_EQ(res, expect);
