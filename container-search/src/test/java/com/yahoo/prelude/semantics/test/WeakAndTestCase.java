@@ -26,9 +26,7 @@ public class WeakAndTestCase {
         var tester = new RuleBaseTester("weakAnd.sr", null);
         var query = new Query("?yql=" + QueryTestCase.httpEncode("select * from webpages where (userQuery() and  (hostname contains 'www.legifrance.gouv.fr'))") + "&query=tva");
         search(new SimpleLinguistics(), new IndexModel(Map.of(), List.of()), query);
-        System.out.println("Before: " + query.getModel().getQueryTree().toString());
         tester.assertSemantics("AND (WEAKAND tva taxe sur la valeur ajoutée tva) hostname:'www legifrance gouv fr'", query);
-        System.out.println("After:  " + query.getModel().getQueryTree().toString());
     }
 
     private Result search(Linguistics linguistics, IndexModel indexModel, Query query) {
