@@ -887,13 +887,16 @@ public class SchemaTestCase {
     }
 
     @Test
-    void testSecondPhaseRerankCount() throws Exception {
+    void testRankSettingsToSchemaInfo() throws Exception {
         String schema =
                 """
                 schema doc {
                     document doc {
                     }
                     rank-profile test {
+                        first-phase {
+                            keep-rank-count: 1234
+                        }
                         second-phase {
                             rerank-count: 43
                         }
@@ -907,16 +910,20 @@ public class SchemaTestCase {
         derived.getSchemaInfo().getConfig(schemaInfoConfigBuilder);
         var schemaInfoConfig = schemaInfoConfigBuilder.build().toString();
         assertTrue(schemaInfoConfig.contains("rerankCount 43"));
+        assertTrue(schemaInfoConfig.contains("keepRankCount 1234"));
     }
 
     @Test
-    void testSecondPhaseTotalRerankCount() throws Exception {
+    void testTotalRankSettingsToSchemaInfo() throws Exception {
         String schema =
                 """
                 schema doc {
                     document doc {
                     }
                     rank-profile test {
+                        first-phase {
+                            total-keep-rank-count: 2345
+                        }
                         second-phase {
                             total-rerank-count: 213
                         }
@@ -930,6 +937,7 @@ public class SchemaTestCase {
         derived.getSchemaInfo().getConfig(schemaInfoConfigBuilder);
         var schemaInfoConfig = schemaInfoConfigBuilder.build().toString();
         assertTrue(schemaInfoConfig.contains("totalRerankCount 213"));
+        assertTrue(schemaInfoConfig.contains("totalKeepRankCount 2345"));
     }
 
     private void assertInheritedFromParent(Schema schema, RankProfileRegistry rankProfileRegistry) {

@@ -24,11 +24,11 @@ public class RankProfileValidatorTest {
 
     @Test
     public void testRerankCountValidation() {
-        validatorFixture(OptionalInt.empty(),      OptionalInt.empty()).process(true, false);
-        validatorFixture(OptionalInt.of(10), OptionalInt.empty()).process(true, false);
-        validatorFixture(OptionalInt.empty(),      OptionalInt.of(100)).process(true, false);
+        rerankCountValidatorFixture(OptionalInt.empty(), OptionalInt.empty()).process(true, false);
+        rerankCountValidatorFixture(OptionalInt.of(10),  OptionalInt.empty()).process(true, false);
+        rerankCountValidatorFixture(OptionalInt.empty(), OptionalInt.of(100)).process(true, false);
         try {
-            validatorFixture(OptionalInt.of(10), OptionalInt.of(100)).process(true, false);
+            rerankCountValidatorFixture(OptionalInt.of(10), OptionalInt.of(100)).process(true, false);
             fail("Expected exception");
         }
         catch (IllegalArgumentException e) {
@@ -37,7 +37,22 @@ public class RankProfileValidatorTest {
         }
     }
 
-    private RankProfileValidator validatorFixture(OptionalInt rerankCount, OptionalInt totalRerankCount) {
+    @Test
+    public void testKeepRankCountValidation() {
+        keepRankCountValidatorFixture(OptionalInt.empty(), OptionalInt.empty()).process(true, false);
+        keepRankCountValidatorFixture(OptionalInt.of(10),  OptionalInt.empty()).process(true, false);
+        keepRankCountValidatorFixture(OptionalInt.empty(), OptionalInt.of(100)).process(true, false);
+        try {
+            keepRankCountValidatorFixture(OptionalInt.of(10), OptionalInt.of(100)).process(true, false);
+            fail("Expected exception");
+        }
+        catch (IllegalArgumentException e) {
+            assertEquals("In schema 'test', rank profile 'profile1': Cannot set or inherit both keep-rank-count and total-keep-rank-count",
+                         Exceptions.toMessageString(e));
+        }
+    }
+
+    private RankProfileValidator rerankCountValidatorFixture(OptionalInt rerankCount, OptionalInt totalRerankCount) {
         var schema = new Schema("test",
                                 MockApplicationPackage.createEmpty(),
                                 new MockFileRegistry(),
@@ -47,6 +62,20 @@ public class RankProfileValidatorTest {
         var rankProfile = new RankProfile("profile1", schema, rankProfiles);
         rerankCount.ifPresent(rankProfile::setRerankCount);
         totalRerankCount.ifPresent(rankProfile::setTotalRerankCount);
+        rankProfiles.add(rankProfile);
+        return new RankProfileValidator(schema, schema.getDeployLogger(), rankProfiles, new QueryProfiles());
+    }
+
+    private RankProfileValidator keepRankCountValidatorFixture(OptionalInt keepRankCount, OptionalInt totalKeepRankCount) {
+        var schema = new Schema("test",
+                                MockApplicationPackage.createEmpty(),
+                                new MockFileRegistry(),
+                                new TestableDeployLogger(),
+                                new TestProperties());
+        var rankProfiles = new RankProfileRegistry();
+        var rankProfile = new RankProfile("profile1", schema, rankProfiles);
+        keepRankCount.ifPresent(rankProfile::setKeepRankCount);
+        totalKeepRankCount.ifPresent(rankProfile::setTotalKeepRankCount);
         rankProfiles.add(rankProfile);
         return new RankProfileValidator(schema, schema.getDeployLogger(), rankProfiles, new QueryProfiles());
     }

@@ -30,6 +30,9 @@ public class RankProfileValidator extends Processor {
         if (profile.getRerankCount().isPresent() && profile.getTotalRerankCount().isPresent())
             throw new IllegalArgumentException("In " + schema + ", " + profile + ": Cannot set or inherit both " +
                                                "rerank-count and total-rerank-count");
+        if (profile.getKeepRankCount().isPresent() && profile.getTotalKeepRankCount().isPresent())
+            throw new IllegalArgumentException("In " + schema + ", " + profile + ": Cannot set or inherit both " +
+                                               "keep-rank-count and total-keep-rank-count");
     }
 
 }
