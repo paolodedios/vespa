@@ -44,6 +44,7 @@ public class ParsedRankProfile extends ParsedBlock {
     private final List<FeatureList> rankFeatures = new ArrayList<>();
     private final List<FeatureList> summaryFeatures = new ArrayList<>();
     private Integer keepRankCount = null;
+    private Integer totalKeepRankCount = null;
     private Integer minHitsPerThread = null;
     private Integer numSearchPartitions = null;
     private Integer numThreadsPerSearch = null;
@@ -105,6 +106,7 @@ public class ParsedRankProfile extends ParsedBlock {
     List<FeatureList> getRankFeatures() { return List.copyOf(this.rankFeatures); }
     List<FeatureList> getSummaryFeatures() { return List.copyOf(this.summaryFeatures); }
     Optional<Integer> getKeepRankCount() { return Optional.ofNullable(this.keepRankCount); }
+    Optional<Integer> getTotalKeepRankCount() { return Optional.ofNullable(this.totalKeepRankCount); }
     Optional<Integer> getMinHitsPerThread() { return Optional.ofNullable(this.minHitsPerThread); }
     Optional<Integer> getNumSearchPartitions() { return Optional.ofNullable(this.numSearchPartitions); }
     Optional<Integer> getNumThreadsPerSearch() { return Optional.ofNullable(this.numThreadsPerSearch); }
@@ -219,8 +221,13 @@ public class ParsedRankProfile extends ParsedBlock {
     }
 
     public void setKeepRankCount(int count) {
-        verifyThat(keepRankCount == null, "already has rerank-count");
+        verifyThat(keepRankCount == null, "already has keep-rank-count");
         this.keepRankCount = count;
+    }
+
+    public void setTotalKeepRankCount(int count) {
+        verifyThat(totalKeepRankCount == null, "already has total-keep-rank-count");
+        this.totalKeepRankCount = count;
     }
 
     public void setMatchPhase(MatchPhaseSettings settings) {

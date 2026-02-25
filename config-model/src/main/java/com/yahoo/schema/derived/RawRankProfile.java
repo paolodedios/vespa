@@ -240,7 +240,7 @@ public class RawRankProfile {
             weakandAdjustTarget = compiled.getWeakandAdjustTarget();
             weakandAllowDropAll = compiled.getWeakandAllowDropAll();
             filterThreshold = compiled.getFilterThreshold();
-            keepRankCount = compiled.getKeepRankCount();
+            keepRankCount = compiled.getKeepRankCount().orElse(-1);
             rankScoreDropLimit = compiled.getRankScoreDropLimit();
             secondPhaseRankScoreDropLimit = compiled.getSecondPhaseRankScoreDropLimit();
             globalPhaseRankScoreDropLimit = compiled.getGlobalPhaseRankScoreDropLimit();

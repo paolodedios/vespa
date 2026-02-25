@@ -34,7 +34,7 @@ import java.util.Optional;
  *
  * @author bratseth
  */
-@SuppressWarnings({"deprecation", "removal"})
+@SuppressWarnings("removal")
 public final class SchemaInfo extends Derived {
 
     private final Schema schema;
@@ -194,6 +194,8 @@ public final class SchemaInfo extends Derived {
                     .hasRankFeatures(rankProfile.hasRankFeatures())
                     .significance(new SchemaInfoConfig.Schema.Rankprofile.Significance.Builder()
                                           .useModel(rankProfile.useSignificanceModel()));
+            rankProfile.getKeepRankCount().ifPresent(rankProfileConfig::keepRankCount);
+            rankProfile.getTotalKeepRankCount().ifPresent(rankProfileConfig::totalKeepRankCount);
             rankProfile.getRerankCount().ifPresent(rankProfileConfig::rerankCount);
             rankProfile.getTotalRerankCount().ifPresent(rankProfileConfig::totalRerankCount);
             for (var input : rankProfile.inputs().entrySet()) {
@@ -235,6 +237,8 @@ public final class SchemaInfo extends Derived {
         private final String name;
         private final boolean hasSummaryFeatures;
         private final boolean hasRankFeatures;
+        private final Optional<Integer> keepRankCount;
+        private final Optional<Integer> totalKeepRankCount;
         private final Optional<Integer> rerankCount;
         private final Optional<Integer> totalRerankCount;
         private final boolean useSignificanceModel;
@@ -245,20 +249,18 @@ public final class SchemaInfo extends Derived {
             this.hasSummaryFeatures =  ! profile.getSummaryFeatures().isEmpty();
             this.hasRankFeatures =  ! profile.getRankFeatures().isEmpty();
             this.inputs = profile.inputs();
+            this.keepRankCount = profile.getKeepRankCount();
+            this.totalKeepRankCount = profile.getTotalKeepRankCount();
             this.rerankCount = profile.getRerankCount();
             this.totalRerankCount = profile.getTotalRerankCount();
             useSignificanceModel = profile.useSignificanceModel();
-            validate();
-        }
-
-        private void validate() {
-            if (rerankCount.isPresent() && totalRerankCount.isPresent())
-                throw new IllegalArgumentException();
         }
 
         public String name() { return name; }
         public boolean hasSummaryFeatures() { return hasSummaryFeatures; }
         public boolean hasRankFeatures() { return hasRankFeatures; }
+        public Optional<Integer> getKeepRankCount() { return keepRankCount; }
+        public Optional<Integer> getTotalKeepRankCount() { return totalKeepRankCount; }
         public Optional<Integer> getRerankCount() { return rerankCount; }
         public Optional<Integer> getTotalRerankCount() { return totalRerankCount; }
         public boolean useSignificanceModel() { return useSignificanceModel; }

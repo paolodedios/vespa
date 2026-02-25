@@ -99,8 +99,11 @@ public class RankProfile implements Cloneable {
     /** Number of hits to be reranked in global-phase, -1 means use default */
     private int globalPhaseRerankCount = -1;
 
-    /** Mysterious attribute */
-    private int keepRankCount = -1;
+    /** The number of hits per node for which to keep rank data in first phase, empty to use the default */
+    private Optional<Integer> keepRankCount = Optional.empty();
+
+    /** The number of hits across all nodes for which to keep rank data in first phase, empty to use keepRankCount */
+    private Optional<Integer> totalKeepRankCount = Optional.empty();
 
     private int numThreadsPerSearch = -1;
     private int minHitsPerThread = -1;
@@ -916,11 +919,18 @@ public class RankProfile implements Cloneable {
         return uniquelyInherited(RankProfile::getIgnoreDefaultRankFeatures, "ignore-default-rank-features").orElse(false);
     }
 
-    public void setKeepRankCount(int rerankArraySize) { this.keepRankCount = rerankArraySize; }
+    public void setKeepRankCount(int count) { this.keepRankCount = Optional.of(count); }
 
-    public int getKeepRankCount() {
-        if (keepRankCount >= 0) return keepRankCount;
-        return uniquelyInherited(RankProfile::getKeepRankCount, c -> c >= 0, "keep-rank-count").orElse(-1);
+    public Optional<Integer> getKeepRankCount() {
+        if (keepRankCount.isPresent()) return keepRankCount;
+        return uniquelyInherited(RankProfile::getKeepRankCount, Optional::isPresent, "keep-rank-count").orElse(Optional.empty());
+    }
+
+    public void setTotalKeepRankCount(int totalKeepRankCount) { this.totalKeepRankCount = Optional.of(totalKeepRankCount); }
+
+    public Optional<Integer> getTotalKeepRankCount() {
+        if (totalKeepRankCount.isPresent()) return totalKeepRankCount;
+        return uniquelyInherited(RankProfile::getTotalKeepRankCount, Optional::isPresent, "total-keep-rank-count").orElse(Optional.empty());
     }
 
     public void setRankScoreDropLimit(double rankScoreDropLimit) { this.rankScoreDropLimit = rankScoreDropLimit; }

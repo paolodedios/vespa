@@ -28,6 +28,10 @@ schema parent1 {
       function1b
     }
 
+    first-phase {
+      total-keep-rank-count: 1234
+    }
+
     second-phase {
       total-rerank-count: 201
     }

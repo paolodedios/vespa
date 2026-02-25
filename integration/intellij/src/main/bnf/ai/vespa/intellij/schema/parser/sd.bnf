@@ -204,7 +204,7 @@ InputDefinition ::= ( QueryFeature | IdentifierVal)
 FirstPhaseDefinition ::= first-phase BlockStart FirstPhaseBody BlockEnd
                          { mixin="ai.vespa.intellij.schema.psi.impl.SdFirstPhaseDefinitionMixin" }
 FirstPhaseBody ::= ( FirstPhaseBodyOptions | NL )* // Does not support zero-or-one occurrences
-private FirstPhaseBodyOptions ::= (keep-rank-count ':' INTEGER_REG) | (rank-score-drop-limit ':' AnyNumber) | ExpressionDefinition
+private FirstPhaseBodyOptions ::= (keep-rank-count ':' INTEGER_REG) | (total-keep-rank-count ':' INTEGER_REG) | (rank-score-drop-limit ':' AnyNumber) | ExpressionDefinition
 
 ExpressionDefinition ::= expression ((':' RankingExpression) | (BlockStart RankingExpression* BlockEnd))
 
@@ -416,7 +416,7 @@ KeywordOrIdentifier ::= schema | search | document | struct | field | type | ind
 KeywordNotIdentifier ::= struct-field | document-summary | omit-summary-features | from-disk | rank-profile | rank-type |
                          num-threads-per-search | termwise-limit | ignore-default-rank-features | min-hits-per-thread | 
                          num-search-partitions | match-phase | max-hits | second-phase | rerank-count | total-rerank-count | min-groups |
-                         first-phase | keep-rank-count | rank-score-drop-limit | rank-properties | summary-features | 
+                         first-phase | keep-rank-count | total-keep-rank-count | rank-score-drop-limit | rank-properties | summary-features |
                          match-features | rank-features |
                          exact-terminator | max-length | gram-size | fast-search | fast-rank | fast-access | distance-metric |
                          indexing-rewrite | query-command | matched-elements-only | lower-bound | upper-bound | 

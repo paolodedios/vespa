@@ -152,18 +152,67 @@ public class RpcSearchInvokerTest {
 
     @Test
     void contentShareIsUsedToSetKeepRankCount() throws IOException {
-        Query query = new Query();
-        query.getModel().getQueryTree().setRoot(new WordItem("ignored"));
+        // total keep rank count in query is applied
+        var query = new Query("?query=ignored&ranking=myProfile");
         query.getRanking().setTotalKeepRankCount(100);
+        assertAdjustedKeepRankCount(query,
+                                    1,
+                                    schemaInfo(OptionalInt.empty(), OptionalInt.empty(),
+                                               OptionalInt.empty(), OptionalInt.empty()));
 
-        List<Holders> nodeHolders = queryGroup(query,
-                                               schemaInfo(OptionalInt.empty(), OptionalInt.empty()),
-                                               List.of(1000, 1035, 0, 1, 13));
-        List<Integer> expected = List.of(49, 49, 20, 1, 1);
+        // total keep rank count in schema is applied
+        query = new Query("?query=ignored&ranking=myProfile");
+        assertAdjustedKeepRankCount(query,
+                                    1,
+                                    schemaInfo(OptionalInt.empty(), OptionalInt.of(100),
+                                               OptionalInt.empty(), OptionalInt.empty()));
 
+        // total keep rank count in query overrides schema
+        query = new Query("?query=ignored&ranking=myProfile");
+        query.getRanking().setTotalKeepRankCount(200);
+        assertAdjustedKeepRankCount(query,
+                                    2,
+                                    schemaInfo(OptionalInt.empty(), OptionalInt.of(100),
+                                               OptionalInt.empty(), OptionalInt.empty()));
+
+        // keep rank count in query overrides total keep rank count in schema
+        query = new Query("?query=ignored&ranking=myProfile");
+        query.getRanking().setKeepRankCount(200);
+        assertFlatKeepRankCount(query,
+                                200,
+                                schemaInfo(OptionalInt.empty(), OptionalInt.of(100),
+                                           OptionalInt.empty(), OptionalInt.empty()));
+
+        // keep rank count in query overrides schema
+        query = new Query("?query=ignored&ranking=myProfile");
+        query.getRanking().setKeepRankCount(200);
+        assertFlatKeepRankCount(query,
+                                200,
+                                schemaInfo(OptionalInt.of(100), OptionalInt.empty(),
+                                           OptionalInt.empty(), OptionalInt.empty()));
+
+        // total keep rank count in query overrides keep rank count in schema
+        query = new Query("?query=ignored&ranking=myProfile");
+        query.getRanking().setTotalKeepRankCount(200);
+        assertAdjustedKeepRankCount(query,
+                                    2,
+                                    schemaInfo(OptionalInt.of(100), OptionalInt.empty(),
+                                               OptionalInt.empty(), OptionalInt.empty()));
+    }
+
+    private void assertAdjustedKeepRankCount(Query query, int multiplier, SchemaInfo schemaInfo) throws IOException {
+        List<Holders> nodeHolders = queryGroup(query, schemaInfo, List.of(1000, 1035, 0, 1, 13));
+        List<Integer> expected = List.of(49 * multiplier, 49 * multiplier, 20 * multiplier, 1, 1 * multiplier);
         var requests = nodeHolders.stream().map(this::decompress).toList();
         for (int i = 0; i < expected.size(); i++)
             assertProperty("vespa.hitcollector.arraysize", expected.get(i), requests.get(i));
+    }
+
+    private void assertFlatKeepRankCount(Query query, int value, SchemaInfo schemaInfo) throws IOException {
+        List<Holders> nodeHolders = queryGroup(query, schemaInfo, List.of(1000, 1035, 0, 1, 13));
+        var requests = nodeHolders.stream().map(this::decompress).toList();
+        for (int i = 0; i < 5; i++)
+            assertProperty("vespa.hitcollector.arraysize", value, requests.get(i));
     }
 
     private List<Holders> queryGroup(Query query,
@@ -172,7 +221,9 @@ public class RpcSearchInvokerTest {
         // Necessary query preparation, in the order it will happen:
         query.prepare();
         query.getModel().getRestrict().add("mySchema");
-        ClusterSearcher.transferRerankCounts(query, schemaInfo);
+        var schema = schemaInfo.newSession(query).schema("mySchema");
+        ClusterSearcher.transferKeepRankCounts(query, schema);
+        ClusterSearcher.transferRerankCounts(query, schema);
 
         List<Node> nodes = new ArrayList<>();
         List<RpcSearchInvoker> nodeInvokers = new ArrayList<>();
@@ -251,12 +302,20 @@ public class RpcSearchInvokerTest {
     }
 
     private SchemaInfo schemaInfo(OptionalInt rerankCount, OptionalInt totalRerankCount) {
+        return schemaInfo(OptionalInt.empty(), OptionalInt.empty(), rerankCount, totalRerankCount);
+    }
+
+    private SchemaInfo schemaInfo(OptionalInt keepRankCount, OptionalInt totalKeepRankCount,
+                                  OptionalInt rerankCount, OptionalInt totalRerankCount) {
+        var schema = new Schema.Builder("mySchema");
+        var profile = new RankProfile.Builder("myProfile");
+        keepRankCount.ifPresent(profile::setKeepRankCount);
+        totalKeepRankCount.ifPresent(profile::setTotalKeepRankCount);
         var secondPhase = new SecondPhase.Builder();
         rerankCount.ifPresent(secondPhase::setRerankCount);
         totalRerankCount.ifPresent(secondPhase::setTotalRerankCount);
-        var schema = new Schema.Builder("mySchema")
-                               .add(new RankProfile.Builder("myProfile").setSecondPhase(secondPhase.build())
-                               .build());
+        profile.setSecondPhase(secondPhase.build());
+        schema.add(profile.build());
         return new SchemaInfo(List.of(schema.build()), List.of());
     }
 
