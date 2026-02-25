@@ -7,6 +7,7 @@ import com.yahoo.prelude.query.WordItem;
 import com.yahoo.prelude.semantics.engine.Match;
 import com.yahoo.prelude.semantics.engine.RuleEvaluation;
 import com.yahoo.protect.Validator;
+import com.yahoo.search.query.QueryTree;
 
 import java.util.List;
 
@@ -84,19 +85,9 @@ public class LiteralTermProduction extends TermProduction {
         }
     }
 
-    /**
-     * Returns true if we should insert at the match position rather than adding to root.
-     * This is the case when the match's parent is a nested composite (not directly under QueryTree).
-     */
     private boolean shouldInsertAtMatch(RuleEvaluation e) {
-        if (getTermType() != TermType.DEFAULT) return false;
         if (e.getNonreferencedMatchCount() == 0) return false;
-        Match matched = e.getNonreferencedMatch(0);
-        CompositeItem parent = matched.getParent();
-        if (parent == null) return false;
-        // Insert at match if parent is not QueryTree and not a direct child of QueryTree
-        CompositeItem grandparent = parent.getParent();
-        return grandparent != null && !(grandparent instanceof com.yahoo.search.query.QueryTree);
+        return shouldInsertAtMatch(e.getNonreferencedMatch(0));
     }
 
     public String toInnerTermString() {

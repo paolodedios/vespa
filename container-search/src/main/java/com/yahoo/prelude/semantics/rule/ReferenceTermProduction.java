@@ -139,18 +139,6 @@ public class ReferenceTermProduction extends TermProduction {
         }
     }
 
-    /**
-     * Returns true if we should insert at the match position rather than adding to root.
-     * This is the case when the match's parent is a nested composite (not directly under QueryTree).
-     */
-    private boolean shouldInsertAtMatch(Match match) {
-        CompositeItem parent = match.getParent();
-        if (parent == null) return false;
-        // Insert at match if parent is not QueryTree and not a direct child of QueryTree
-        CompositeItem grandparent = parent.getParent();
-        return grandparent != null && !(grandparent instanceof QueryTree);
-    }
-
     @Override
     public String toInnerTermString() {
         return getLabelString() + "[" + reference + "]";
