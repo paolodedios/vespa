@@ -249,7 +249,7 @@ TEST(WordAlternativesTest, require_that_blueprints_can_be_built) {
     {
         const fef::TermFieldMatchDataPosition & pos = *iter;
         EXPECT_EQ(pos.getPosition(), 11);
-        EXPECT_DOUBLE_EQ(pos.getMatchExactness(), 0.7);
+        EXPECT_FLOAT_EQ(pos.getMatchExactness(), 0.7f);
     }
     ok = s->seek(docid + 1);
     docid = s->getDocId();
