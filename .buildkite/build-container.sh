@@ -6,10 +6,8 @@
 set -o errexit
 set -o nounset
 set -o pipefail
+set -o xtrace
 
-if [[ -n "${DEBUG:-}" ]]; then
-    set -o xtrace
-fi
 
 if ! docker ps &> /dev/null; then
     echo "No working docker command found."
