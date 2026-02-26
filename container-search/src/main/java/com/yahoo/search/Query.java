@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A search query containing all the information required to produce a Result.
@@ -362,7 +363,7 @@ public class Query extends com.yahoo.processing.Request implements Cloneable {
                       Map<String, Embedder> embedders,
                       ZoneInfo zoneInfo,
                       SchemaInfo schemaInfo) {
-        startTime = System.currentTimeMillis();
+        startTime = httpRequest.creationTime(TimeUnit.MILLISECONDS);
         if (queryProfile != null) {
             // Move all request parameters to the query profile
             Properties queryProfileProperties = new QueryProfileProperties(queryProfile, embedders, zoneInfo);
