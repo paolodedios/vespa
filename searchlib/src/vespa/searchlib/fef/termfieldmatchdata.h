@@ -210,6 +210,8 @@ public:
     // Returns true if this instance has match data for docId.
     bool has_data(uint32_t docId) const noexcept { return docId == _docId; }
 
+    bool has_invalid_docid() const noexcept { return _docId == invalidId(); }
+
     /**
      * Obtain the weight of the first occurrence in this field, or 1
      * if no occurrences are present. This function is intended for

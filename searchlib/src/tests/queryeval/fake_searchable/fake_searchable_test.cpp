@@ -429,7 +429,7 @@ TEST_F(FakeSearchableTest, require_that_repeated_unpack_for_same_docid_is_ignore
 
     EXPECT_TRUE(search->seek(docid));
     auto& tfmd = *md->resolveTermField(handle);
-    EXPECT_TRUE(tfmd.has_data(TermFieldMatchData::invalidId()));
+    EXPECT_TRUE(tfmd.has_invalid_docid());
     EXPECT_EQ(0u, tfmd.size());
     search->unpack(docid);
     EXPECT_TRUE(tfmd.has_ranking_data(docid));

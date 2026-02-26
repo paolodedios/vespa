@@ -148,10 +148,9 @@ QueryTermTest::test_unpack_match_data_for_term_node(bool interleaved_features, b
 {
     ASSERT_NO_FATAL_FAILURE(build_query(filter));
     _tfmd->setNeedInterleavedFeatures(interleaved_features);
-    auto invalid_id = TermFieldMatchData::invalidId();
-    EXPECT_TRUE(_tfmd->has_data(invalid_id));
+    EXPECT_TRUE(_tfmd->has_invalid_docid());
     _node->unpack_match_data(1, *_md, _index_env, ElementIds::select_all());
-    EXPECT_TRUE(_tfmd->has_data(invalid_id));
+    EXPECT_TRUE(_tfmd->has_invalid_docid());
     ASSERT_NO_FATAL_FAILURE(populate_term());
     _node->unpack_match_data(2, *_md, _index_env, ElementIds::select_all());
     EXPECT_TRUE(_tfmd->has_ranking_data(2));
@@ -216,7 +215,7 @@ TEST_F(QueryTermTest, unpack_match_data_with_element_filter)
     EXPECT_EQ(make_vec({3}), extract_element_ids(docid));
     reset_tfmd();
     _node->unpack_match_data(docid, *_md, _index_env, ElementIds(make_vec({4})));
-    EXPECT_TRUE(_tfmd->has_data(TermFieldMatchData::invalidId()));
+    EXPECT_TRUE(_tfmd->has_invalid_docid());
     EXPECT_EQ(0, _tfmd->getNumOccs());
     EXPECT_EQ(0, _tfmd->getFieldLength());
     EXPECT_EQ(0, _tfmd->size());

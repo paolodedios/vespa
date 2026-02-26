@@ -51,7 +51,7 @@ void testInvalidId() {
     const TermFieldMatchData empty;
     using search::queryeval::SearchIterator;
 
-    EXPECT_TRUE(empty.has_data(TermFieldMatchData::invalidId()));
+    EXPECT_TRUE(empty.has_invalid_docid());
     EXPECT_TRUE(TermFieldMatchData::invalidId() < (SearchIterator::beginId() + 1 ) ||
                TermFieldMatchData::invalidId() > (search::endDocId - 1));
 }
@@ -324,7 +324,7 @@ TEST(TermFieldModelTest, require_that_MatchData_soft_reset_retains_appropriate_s
     EXPECT_TRUE(new_term->isNotNeeded());
     EXPECT_EQ(new_term->getFieldId(), 7u);
     EXPECT_EQ(new_term->getWeight(), 21);
-    EXPECT_TRUE(new_term->has_data(TermFieldMatchData::invalidId()));
+    EXPECT_TRUE(new_term->has_invalid_docid());
 }
 
 TEST(TermFieldModelTest, require_that_compareWithExactness_implements_a_strict_weak_ordering) {
