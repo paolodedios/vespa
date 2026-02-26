@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import static com.yahoo.container.protect.Error.BACKEND_COMMUNICATION_ERROR;
@@ -224,9 +223,7 @@ public class StatisticsSearcher extends Searcher {
 
         incrQueryCount(metricContext);
         logQuery(query);
-        // Timestamp when request was initially processed by Jetty
-        long startMs = Optional.ofNullable(query.getHttpRequest())
-                .map(r -> r.creationTime(TimeUnit.MILLISECONDS)).orElseGet(System::currentTimeMillis);
+        long startMs = query.getStartTime();
         qps(metricContext);
         metric.set(QUERY_TIMEOUT_METRIC, query.getTimeout(), metricContext);
         Result result;
