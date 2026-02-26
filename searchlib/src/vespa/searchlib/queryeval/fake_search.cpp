@@ -39,6 +39,7 @@ void
 FakeSearch::doUnpack(uint32_t docid)
 {
     if (_unpacked_docid == docid) {
+        _tfmda[0]->clear_hidden_from_ranking();
         return;
     }
     using PosCtx = fef::TermFieldMatchDataPosition;
@@ -49,6 +50,7 @@ FakeSearch::doUnpack(uint32_t docid)
     const Doc &doc = _result.inspect()[_offset];
     assert(doc.docId == docid);
     _tfmda[0]->reset(docid);
+    _tfmda[0]->clear_hidden_from_ranking();
     int32_t sum_weight = 0;
     for (uint32_t i = 0; i < doc.elements.size(); ++i) {
         const Elem &elem = doc.elements[i];

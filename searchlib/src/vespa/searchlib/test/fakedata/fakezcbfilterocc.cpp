@@ -228,11 +228,16 @@ FakeFilterOccZCBArrayIterator::doSeek(uint32_t docId)
 void
 FakeFilterOccZCBArrayIterator::doUnpack(uint32_t docId)
 {
-    if (_matchData.size() != 1 || getUnpacked()) {
+    if (_matchData.size() != 1) {
+        return;
+    }
+    if (getUnpacked()) {
+        _matchData[0]->clear_hidden_from_ranking();
         return;
     }
     assert(docId == getDocId());
     _matchData[0]->reset(docId);
+    _matchData[0]->clear_hidden_from_ranking();
     setUnpacked();
 }
 
