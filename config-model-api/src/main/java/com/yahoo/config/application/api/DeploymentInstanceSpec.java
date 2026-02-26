@@ -220,7 +220,7 @@ public final class DeploymentInstanceSpec extends DeploymentSpec.Steps {
     /** Returns the revision change strategy of this, which is {@link DeploymentSpec.RevisionChange#whenFailing} by default */
     public DeploymentSpec.RevisionChange revisionChange() { return revisionChange; }
 
-    /** Returns the upgrade rollout strategy of this, which is {@link DeploymentSpec.UpgradeRollout#separate} by default */
+    /** Returns the upgrade rollout strategy of this, which is {@link DeploymentSpec.UpgradeRollout#simultaneous} by default */
     public DeploymentSpec.UpgradeRollout upgradeRollout() { return upgradeRollout; }
 
     /** Minimum cumulative, enqueued risk required for a new revision to roll out to this instance. 0 by default. */

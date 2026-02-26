@@ -737,7 +737,7 @@ public final class DeploymentSpec {
         separate,
         /** Leading: Application changes are allowed to start and catch up to the platform upgrade. */
         leading,
-        // /** Simultaneous: Application changes deploy independently of platform upgrades. */
+        /** Simultaneous: Application changes deploy independently of platform upgrades. */
         simultaneous
     }
 
