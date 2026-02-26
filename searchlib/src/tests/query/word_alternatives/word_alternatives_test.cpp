@@ -226,7 +226,7 @@ TEST(WordAlternativesTest, require_that_blueprints_can_be_built) {
     EXPECT_EQ(docid, 17);
     s->unpack(docid);
     EXPECT_EQ(tfmd.getFieldId(), 42);
-    EXPECT_EQ(tfmd.getDocId(), docid);
+    EXPECT_TRUE(tfmd.has_ranking_data(docid));
     EXPECT_EQ(tfmd.getNumOccs(), 1);
     EXPECT_EQ(tfmd.size(), 1);
     auto iter = tfmd.begin();
@@ -241,7 +241,7 @@ TEST(WordAlternativesTest, require_that_blueprints_can_be_built) {
     docid = s->getDocId();
     EXPECT_EQ(docid, 23);
     s->unpack(docid);
-    EXPECT_EQ(tfmd.getDocId(), docid);
+    EXPECT_TRUE(tfmd.has_ranking_data(docid));
     EXPECT_EQ(tfmd.getNumOccs(), 1);
     EXPECT_EQ(tfmd.size(), 1);
     iter = tfmd.begin();
