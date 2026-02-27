@@ -82,7 +82,9 @@ cd system-test
 git checkout "$GITREF"
 mkdir -p docker/vespa-systemtests
 git archive HEAD --format tar | tar x -C docker/vespa-systemtests
-find docker/vespa-systemtests -name pom.xml | xargs perl -pi -e 's{>\${vespa\.version}<}{>'${VESPA_VERSION}'<}'
+before="\\\${vespa.version}"
+after="${VESPA_VERSION}"
+find docker/vespa-systemtests -name pom.xml -print0 | xargs -0 perl -pi -e "s,>${before}<,>${after}<,"
 cd docker
 echo "Copying Maven repository and RPMs for system-test container..."
 rm -rf maven-repo
