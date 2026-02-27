@@ -470,13 +470,12 @@ FakeFilterOccZCArrayIterator::doUnpack(uint32_t docId)
     if (_matchData.size() != 1) {
         return;
     }
+    _matchData[0]->clear_hidden_from_ranking();
     if (getUnpacked()) {
-        _matchData[0]->clear_hidden_from_ranking();
         return;
     }
     assert(docId == getDocId());
     _matchData[0]->reset(docId);
-    _matchData[0]->clear_hidden_from_ranking();
     setUnpacked();
 }
 
