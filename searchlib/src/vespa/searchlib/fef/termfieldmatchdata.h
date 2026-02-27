@@ -56,6 +56,7 @@ private:
     static constexpr uint16_t UNPACK_NORMAL_FEATURES_FLAG = 4;
     static constexpr uint16_t UNPACK_INTERLEAVED_FEATURES_FLAG = 8;
     static constexpr uint16_t UNPACK_ALL_FEATURES_MASK = UNPACK_NORMAL_FEATURES_FLAG | UNPACK_INTERLEAVED_FEATURES_FLAG;
+    static constexpr uint16_t HIDDEN_FROM_RANKING = 16;
 
     uint32_t  _docId;
     uint16_t  _fieldId;
@@ -205,7 +206,7 @@ public:
     }
 
     // Returns true if this instance has match data for docId that is visible to the ranking framework.
-    bool has_ranking_data(uint32_t docId) const noexcept { return docId == _docId; }
+    bool has_ranking_data(uint32_t docId) const noexcept { return docId == _docId && !is_hidden_from_ranking(); }
 
     // Returns true if this instance has match data for docId.
     bool has_data(uint32_t docId) const noexcept { return docId == _docId; }
@@ -303,6 +304,16 @@ public:
             _flags &= ~UNPACK_INTERLEAVED_FEATURES_FLAG;
         }
     }
+
+    void set_hidden_from_ranking() noexcept {
+        _flags |= HIDDEN_FROM_RANKING;
+    }
+
+    void clear_hidden_from_ranking() noexcept {
+        _flags &= ~HIDDEN_FROM_RANKING;
+    }
+
+    bool is_hidden_from_ranking() const noexcept { return (_flags & HIDDEN_FROM_RANKING) != 0; }
 
     void filter_elements(uint32_t docid, std::span<const uint32_t> element_ids);
 
