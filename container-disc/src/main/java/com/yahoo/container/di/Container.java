@@ -120,11 +120,7 @@ public class Container {
     {
         ConfigSnapshot snapshot;
         while (true) {
-            // If the previous generation was invalidated (leastGeneration > graph.generation()),
-            // the old graph's config keys may reference components that no longer exist.
-            // Use empty keys to force a bootstrap-first config retrieval.
-            var configKeys = leastGeneration > graph.generation() ? Set.<ConfigKey<? extends ConfigInstance>>of() : graph.configKeys();
-            snapshot = retriever.getConfigs(configKeys, leastGeneration, isInitializing);
+            snapshot = retriever.getConfigs(graph.configKeys(), leastGeneration, isInitializing);
             updateApplyOnRestart();
 
             if (log.isLoggable(FINE))
