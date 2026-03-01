@@ -142,7 +142,7 @@ public class DeploymentSpecTest {
         assertEquals(DeploymentSpec.UpgradePolicy.defaultPolicy, spec.requireInstance("default").upgradePolicy());
         assertEquals(DeploymentSpec.RevisionTarget.latest, spec.requireInstance("default").revisionTarget());
         assertEquals(DeploymentSpec.RevisionChange.whenFailing, spec.requireInstance("default").revisionChange());
-        assertEquals(DeploymentSpec.UpgradeRollout.separate, spec.requireInstance("default").upgradeRollout());
+        assertEquals(DeploymentSpec.UpgradeRollout.simultaneous, spec.requireInstance("default").upgradeRollout());
         assertEquals(0, spec.requireInstance("default").minRisk());
         assertEquals(0, spec.requireInstance("default").maxRisk());
         assertEquals(8, spec.requireInstance("default").maxIdleHours());
@@ -425,16 +425,16 @@ public class DeploymentSpecTest {
                 "   <instance id='default'>" +
                 "      <upgrade rollout='leading' />" +
                 "   </instance>" +
-                "   <instance id='aggressive'>" +
-                "      <upgrade rollout='simultaneous' />" +
+                "   <instance id='conservative'>" +
+                "      <upgrade rollout='separate' />" +
                 "   </instance>" +
                 "   <instance id='custom'/>" +
                 "</deployment>"
         );
         DeploymentSpec spec = DeploymentSpec.fromXml(r);
         assertEquals("leading", spec.requireInstance("default").upgradeRollout().toString());
-        assertEquals("separate", spec.requireInstance("custom").upgradeRollout().toString());
-        assertEquals("simultaneous", spec.requireInstance("aggressive").upgradeRollout().toString());
+        assertEquals("separate", spec.requireInstance("conservative").upgradeRollout().toString());
+        assertEquals("simultaneous", spec.requireInstance("custom").upgradeRollout().toString());
     }
 
     @Test
